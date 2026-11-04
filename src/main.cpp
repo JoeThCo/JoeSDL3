@@ -105,16 +105,32 @@ int main(int, char **)
 
     // update the window display
     SDL_UpdateWindowSurface(window);
+
     SDL_Event event;
-    bool is_running = true;
-    while (is_running)
+    bool is_main_looping = true;
+    while (is_main_looping)
     {
-        if (SDL_WaitEvent(&event))
-            if (event.type == SDL_EVENT_WINDOW_CLOSE_REQUESTED)
-                is_running = false;
+        while (SDL_PollEvent(&event) != 0)
+        {
+            switch (event.type)
+            {
+            case SDL_EVENT_QUIT:
+                is_main_looping = false;
+                break;
+            case SDL_EVENT_KEY_DOWN:
+            case SDL_EVENT_KEY_UP:
+            {
+                char key_char = static_cast<char>(event.key.key);
+                std::string_view action = (event.type == SDL_EVENT_KEY_DOWN) ? "down" : "up";
+                std::println("{} {}", key_char, action);
+                break;
+            }
+            }
+        }
+
+        SDL_Delay(16);
     }
 
     kill();
-
     return 0;
 }
