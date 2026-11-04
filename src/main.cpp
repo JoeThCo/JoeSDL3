@@ -10,21 +10,11 @@ build/JoeGameEngine
 */
 
 SDL_Window *window;
-SDL_Surface *surface;
-
-SDL_Surface *image1;
+SDL_Renderer *renderer;
 
 void printError()
 {
     std::println("SDL Init Error: {}", SDL_GetError());
-}
-
-Uint32 makeColor(SDL_Surface *surface, int r, int g, int b)
-{
-    return SDL_MapRGB(
-        SDL_GetPixelFormatDetails(surface->format),
-        SDL_GetSurfacePalette(surface),
-        r, g, b);
 }
 
 bool init()
@@ -37,50 +27,17 @@ bool init()
     }
 
     // create the window
-    window = SDL_CreateWindow("JoeGameEngine", 1280, 720, 0);
-    if (!window)
+    bool isCreated = SDL_CreateWindowAndRenderer("JoeGameEngine", 1280, 720, 0, &window, &renderer);
+    if (!isCreated)
     {
         printError();
         return false;
     }
-
-    // get the window surface
-    surface = SDL_GetWindowSurface(window);
-    if (!surface)
-    {
-        printError();
-        return false;
-    }
-    return true;
-}
-
-bool load()
-{
-    SDL_Surface *temp1;
-
-    temp1 = SDL_LoadBMP("assets/CubeWorld.bmp");
-    if (!temp1)
-    {
-        printError();
-        return false;
-    }
-
-    image1 = SDL_ConvertSurface(temp1, surface->format);
-    SDL_DestroySurface(temp1);
-
-    if (!image1)
-    {
-        printError();
-        return false;
-    }
-
     return true;
 }
 
 void kill()
 {
-    SDL_DestroySurface(image1);
-
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
@@ -90,32 +47,31 @@ int main(int, char **)
     if (!init())
         return 1;
 
-    if (!load())
-        return 1;
+    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+    SDL_RenderClear(renderer); // fill back buffer with draw call
 
-    Uint32 color = makeColor(surface, 128, 128, 128);
-    SDL_FillSurfaceRect(surface, NULL, color);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderLine(renderer, 0, 0, 100, 100);
 
-    SDL_Rect dest;
-    dest.x = 160;
-    dest.y = 120;
-    dest.w = 320;
-    dest.h = 240;
-    SDL_BlitSurfaceScaled(image1, NULL, surface, &dest, SDL_SCALEMODE_LINEAR);
+    SDL_FRect r;
+    r.x = 200;
+    r.y = 200;
+    r.h = 50;
+    r.w = 50;
+    SDL_RenderRect(renderer, &r);
 
-    // update the window display
-    SDL_UpdateWindowSurface(window);
+    SDL_RenderPresent(renderer); // display that hoe
 
     SDL_Event event;
-    bool is_main_looping = true;
-    while (is_main_looping)
+    bool isMainLooping = true;
+    while (isMainLooping)
     {
         while (SDL_PollEvent(&event) != 0)
         {
             switch (event.type)
             {
             case SDL_EVENT_QUIT:
-                is_main_looping = false;
+                isMainLooping = false;
                 break;
             case SDL_EVENT_KEY_DOWN:
             case SDL_EVENT_KEY_UP:
