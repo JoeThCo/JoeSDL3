@@ -1,0 +1,7 @@
+{
+  "dotnet.defaultSolution": "YourMainSolution.sln",
+  "omnisharp.enableMsBuildLoadProjectsOnDemand": true,
+  "files.watcherExclude": {
+    "**/vendor/**": true
+  }
+}
