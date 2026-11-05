@@ -1,6 +1,6 @@
 #include "GameObject.hpp"
 
-// --- GameObject Implementation ---
+// --- GameObject ---
 GameObject::GameObject(float x, float y, float w, float h) : rect{x, y, w, h} {}
 
 SDL_FRect GameObject::getRect() const

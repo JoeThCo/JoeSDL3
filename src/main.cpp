@@ -14,17 +14,12 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 Uint64 lastTime = SDL_GetTicks();
 
-void printError()
-{
-    std::println("SDL Init Error: {}", SDL_GetError());
-}
-
 bool init()
 {
     // INIT SDL, will return false if it fails
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
     {
-        printError();
+        std::println("SDL Init Error: {}", SDL_GetError());
         return false;
     }
 
@@ -32,7 +27,7 @@ bool init()
     bool isCreated = SDL_CreateWindowAndRenderer("JoeGameEngine", 1280, 720, 0, &window, &renderer);
     if (!isCreated)
     {
-        printError();
+        std::println("SDL Init Error: {}", SDL_GetError());
         return false;
     }
     return true;
@@ -50,17 +45,15 @@ int main(int, char **)
     if (!init())
         return 1;
 
-    SDL_RenderPresent(renderer); // display that hoe
-
     auto player = std::make_unique<Player>(100.0f, 100.0f, 50.0f, 50.0f, 100.0f);
 
     SDL_Event event;
     bool isMainLooping = true;
     while (isMainLooping)
     {
-        SDL_PumpEvents();
         while (SDL_PollEvent(&event) != 0)
         {
+            // basic input
             switch (event.type)
             {
             case SDL_EVENT_QUIT:
@@ -77,10 +70,12 @@ int main(int, char **)
             }
         }
 
+        // delta time
         Uint64 currentTime = SDL_GetTicks();
         float deltaTime = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
 
+        // key state
         const bool *keystate = SDL_GetKeyboardState(NULL);
 
         // update objects
