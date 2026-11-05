@@ -2,15 +2,13 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
+
 #include <iostream>
 #include <vector>
 #include <memory>
 
+#include "GameObjectFactory.hpp"
 #include "GameObject.hpp"
-#include "Collision.hpp"
-#include "Components/BoxColliderComponent.hpp"
-#include "Components/ShapeRendererComponent.hpp"
-#include "Components/PlayerMovementComponent.hpp"
 
 /*
 cmake --build --preset default
@@ -82,14 +80,13 @@ int main(int, char **)
         return 1;
 
     std::vector<std::unique_ptr<GameObject>> allGameObjects;
-
-    spawnPlayer(allGameObjects, 100.0f, 100.0f);
+    GameObjectFactory::spawnPlayer(allGameObjects, 100.0f, 100.0f);
 
     SDL_Event event;
     bool isMainLooping = true;
     while (isMainLooping)
     {
-        while (SDL_PollEvent(&event) != 0)
+        while (SDL_PollEvent(&event))
         {
             // basic input
             switch (event.type)
@@ -97,19 +94,18 @@ int main(int, char **)
             case SDL_EVENT_QUIT:
                 isMainLooping = false;
                 break;
+
             case SDL_EVENT_KEY_DOWN:
             case SDL_EVENT_KEY_UP:
             {
-                char key_char = static_cast<char>(event.key.key);
+                const char *key_char = SDL_GetKeyName(event.key.key);
                 std::string_view action = (event.type == SDL_EVENT_KEY_DOWN) ? "down" : "up";
                 std::println("{} {}", key_char, action);
                 break;
             }
+
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
-                float mouseX = 0.0f;
-                float mouseY = 0.0f;
-                SDL_GetMouseState(&mouseX, &mouseY);
-                std::println("Mouse @ {}, {}", mouseX, mouseY);
+                std::println("Mouse @ {}, {}", event.button.x, event.button.y);
                 // allGameObjects.push_back(std::make_unique<Player>(mouseX, mouseY, 50.0f, 50.0f, 100.0f));
             }
         }

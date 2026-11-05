@@ -28,11 +28,12 @@ add_executable(JoeGameEngine
   src/GameObject.hpp
   src/Vector2.cpp
   src/Vector2.hpp
-  src/Component.hpp
-  src/BoxColliderComponent.hpp
-  src/TransformComponent.hpp
-  src/ShapeRendererComponent.hpp
-  src/PlayerMovementComponent.hpp
+  src/Components/Component.hpp
+  src/Components/BoxColliderComponent.hpp
+  src/Components/TransformComponent.hpp
+  src/Components/ShapeRendererComponent.hpp
+  src/Components/PlayerMovementComponent.hpp
+  src/GameObjectFactory.hpp
 )
 
 if(APPLE)
