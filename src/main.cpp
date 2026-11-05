@@ -135,18 +135,11 @@ int main(int, char **)
         SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
         SDL_RenderClear(renderer); // fill back buffer with draw call
 
-        // render objects
-        for (auto &gameObject : allGameObjects)
-        {
-            if (!gameObject->GetIsAlive())
-                continue;
-            gameObject->render(renderer);
-        }
-
         // delete dead
         std::erase_if(allGameObjects, [](const auto &obj)
                       { return !obj->GetIsAlive(); });
 
+        // render
         for (auto &gameObject : allGameObjects)
         {
             if (!gameObject->GetIsAlive())
@@ -155,8 +148,7 @@ int main(int, char **)
         }
 
         SDL_RenderPresent(renderer);
-
-        SDL_Delay(16);
+        SDL_Delay(16); // 1/60 = ~.1667
     }
 
     kill();
