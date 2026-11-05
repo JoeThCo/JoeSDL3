@@ -90,13 +90,19 @@ int main(int, char **)
             {
                 const char *key_char = SDL_GetKeyName(event.key.key);
                 std::string_view action = (event.type == SDL_EVENT_KEY_DOWN) ? "down" : "up";
-                std::println("{} {}", key_char, action);
+                // std::println("{} {}", key_char, action);
                 break;
             }
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
-                std::println("Mouse @ {}, {}", event.button.x, event.button.y);
+                // std::println("Mouse @ {}, {}", event.button.x, event.button.y);
+                GameObject *bullet = GameObjectFactory::spawnBullet(allGameObjects, Vector2(event.button.x, event.button.y), 0);
+                TransformComponent *transformComponent = bullet->getComponent<TransformComponent>();
+                if (transformComponent)
+                {
+                    transformComponent->move(transformComponent->getCenter());
+                }
                 break;
             }
             }
@@ -140,7 +146,7 @@ int main(int, char **)
         // }
 
         // render background
-        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
         SDL_RenderClear(renderer); // fill back buffer with draw call
 
         // delete dead
