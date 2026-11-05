@@ -5,11 +5,12 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+
 #include "GameObject.hpp"
 #include "Collision.hpp"
-#include "BoxColliderComponent.hpp"
-#include "ShapeRendererComponent.hpp"
-#include "PlayerMovementComponent.hpp"
+#include "Components/BoxColliderComponent.hpp"
+#include "Components/ShapeRendererComponent.hpp"
+#include "Components/PlayerMovementComponent.hpp"
 
 /*
 cmake --build --preset default

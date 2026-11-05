@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include <typeindex>
-#include "Component.hpp"
+#include "Components/Component.hpp"
 
 class GameObject
 {

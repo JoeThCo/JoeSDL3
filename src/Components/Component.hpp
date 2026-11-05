@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
-#include "GameObject.hpp"
+#include "../GameObject.hpp"
 
 class GameObject;
 
