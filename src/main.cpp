@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include "GameObject.hpp"
+#include "Collision.hpp"
 
 /*
 cmake --build --preset default
@@ -49,7 +50,8 @@ int main(int, char **)
 
     std::vector<std::unique_ptr<GameObject>> allGameObjects;
 
-    allGameObjects.push_back(std::make_unique<Player>(100.0f, 100.0f, 50.0f, 50.0f, 100.0f));
+    allGameObjects.push_back(std::make_unique<Player>(200.0f, 200.0f, 50.0f, 50.0f, 100.0f));
+    allGameObjects.push_back(std::make_unique<Wall>(100.0f, 100.0f, 50.0f, 50.0f));
 
     SDL_Event event;
     bool isMainLooping = true;
@@ -91,6 +93,19 @@ int main(int, char **)
         for (auto &gameObject : allGameObjects)
         {
             gameObject->update(deltaTime, keystate);
+        }
+
+        // collision
+        for (size_t i = 0; i < allGameObjects.size(); ++i)
+        {
+            for (size_t j = i + 1; j < allGameObjects.size(); ++j)
+            {
+                if (!allGameObjects[i]->GetIsAlive() || !allGameObjects[j]->GetIsAlive())
+                    continue;
+                if (checkAABB(allGameObjects[i]->getRect(), allGameObjects[j]->getRect()))
+                {
+                }
+            }
         }
 
         // render background

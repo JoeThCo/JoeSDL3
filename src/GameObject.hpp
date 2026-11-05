@@ -31,3 +31,11 @@ public:
     void update(float deltaTime, const bool *keystate) override;
     void render(SDL_Renderer *renderer) override;
 };
+
+class Wall : public GameObject
+{
+public:
+    Wall(float x, float y, float w, float h);
+    void update(float deltaTime, const bool *keystate) override;
+    void render(SDL_Renderer *renderer);
+};

@@ -41,3 +41,17 @@ void Player::render(SDL_Renderer *renderer)
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     SDL_RenderFillRect(renderer, &rect);
 }
+
+// --- Wall --
+Wall::Wall(float x, float y, float w, float h) : GameObject(x, y, w, h) {}
+
+void Wall::update(float deltaTime, const bool *keystate)
+{
+    // empty
+}
+
+void Wall::render(SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(renderer, &rect);
+}
