@@ -4,6 +4,7 @@
 // Constructors
 Vector2::Vector2() : x(0.0f), y(0.0f) {}
 Vector2::Vector2(float x, float y) : x(x), y(y) {}
+Vector2::Vector2(float z) : x(z), y(z) {}
 
 // Vector arithmetic
 Vector2 Vector2::operator+(const Vector2 &other) const
@@ -44,13 +45,18 @@ Vector2 &Vector2::operator*=(float scalar)
 
 Vector2 Vector2::operator/(float scalar) const
 {
+    if (scalar == 0.0f)
+        return Vector2(0.0f, 0.0f); // error?
     return Vector2(x / scalar, y / scalar);
 }
 
 Vector2 &Vector2::operator/=(float scalar)
 {
-    x /= scalar;
-    y /= scalar;
+    if (scalar != 0.0f)
+    {
+        x /= scalar;
+        y /= scalar;
+    }
     return *this;
 }
 

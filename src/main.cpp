@@ -64,23 +64,13 @@ void kill()
     SDL_Quit();
 }
 
-void spawnPlayer(std::vector<std::unique_ptr<GameObject>> &allGameObjects, float startX, float startY)
-{
-    auto player = std::make_unique<GameObject>();
-    player->addComponent<TransformComponent>(startX, startY, 50.0f, 100.0f);
-    player->addComponent<PlayerMovementComponent>(150.0);
-    player->addComponent<BoxColliderComponent>(50.0f, 50.0f);
-    player->addComponent<ShapeRendererComponent>(0, 255, 0);
-    allGameObjects.push_back(std::move(player));
-}
-
 int main(int, char **)
 {
     if (!init())
         return 1;
 
     std::vector<std::unique_ptr<GameObject>> allGameObjects;
-    GameObjectFactory::spawnPlayer(allGameObjects, 100.0f, 100.0f);
+    GameObjectFactory::spawnPlayer(allGameObjects, Vector2(100.0f, 100.0f));
 
     SDL_Event event;
     bool isMainLooping = true;
@@ -105,8 +95,10 @@ int main(int, char **)
             }
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            {
                 std::println("Mouse @ {}, {}", event.button.x, event.button.y);
-                // allGameObjects.push_back(std::make_unique<Player>(mouseX, mouseY, 50.0f, 50.0f, 100.0f));
+                break;
+            }
             }
         }
 

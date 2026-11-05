@@ -8,6 +8,7 @@ struct Vector2
     // Constructors
     Vector2();
     Vector2(float x, float y);
+    Vector2(float z);
 
     // + and -
     Vector2 operator+(const Vector2 &other) const;
