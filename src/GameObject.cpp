@@ -3,6 +3,8 @@
 // --- GameObject ---
 GameObject::GameObject(float x, float y, float w, float h) : rect{x, y, w, h} {}
 
+GameObject::~GameObject() = default;
+
 SDL_FRect GameObject::getRect() const
 {
     return rect;
