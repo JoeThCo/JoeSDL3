@@ -66,6 +66,7 @@ int main(int, char **)
     bool isMainLooping = true;
     while (isMainLooping)
     {
+        SDL_PumpEvents();
         while (SDL_PollEvent(&event) != 0)
         {
             switch (event.type)
