@@ -1,41 +1,60 @@
 #pragma once
-
 #include <SDL3/SDL.h>
-#include "Vector2.hpp"
+#include <vector>
+#include <memory>
+#include <typeindex>
+#include "Component.hpp"
 
 class GameObject
 {
 protected:
-    SDL_FRect rect;
+    std::vector<std::unique_ptr<Component>> components;
     bool isAlive = true;
 
 public:
-    GameObject(float x, float y, float w, float h);
-    virtual ~GameObject();
+    virtual ~GameObject() = default;
 
-    virtual void update(float deltaTime, const bool *keystate = nullptr) = 0;
-    virtual void render(SDL_Renderer *renderer) = 0;
+    // Add component to object
+    template <typename T, typename... Args>
+    T &addComponent(Args &&...args)
+    {
+        auto comp = std::make_unique<T>(std::forward<Args>(args)...);
+        comp->Owner = this;
+        T &ref = *comp;
+        components.push_back(std::move(comp));
+        return ref;
+    }
 
-    bool GetIsAlive() const { return isAlive; }
-    SDL_FRect getRect() const;
-};
+    // get component by type
+    template <typename T>
+    T *getComponent()
+    {
+        for (auto &comp : components)
+        {
+            if (auto *target = dynamic_cast<T *>(comp.get()))
+            {
+                return target;
+            }
+        }
+        return nullptr;
+    }
 
-class Player : public GameObject
-{
-private:
-    float speed;
+    void update(float deltaTime, const bool *keystate = nullptr)
+    {
+        for (auto &comp : components)
+        {
+            comp->update(deltaTime);
+        }
+    }
 
-public:
-    Player(float x, float y, float w, float h, float speed);
+    void render(SDL_Renderer *renderer)
+    {
+        for (auto &comp : components)
+        {
+            comp->render(renderer);
+        }
+    }
 
-    void update(float deltaTime, const bool *keystate) override;
-    void render(SDL_Renderer *renderer) override;
-};
-
-class Wall : public GameObject
-{
-public:
-    Wall(float x, float y, float w, float h);
-    void update(float deltaTime, const bool *keystate) override;
-    void render(SDL_Renderer *renderer);
+    bool GetIsAlive() const { return isAlive; };
+    void destroy() { isAlive = false; };
 };

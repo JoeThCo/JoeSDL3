@@ -7,6 +7,9 @@
 #include <memory>
 #include "GameObject.hpp"
 #include "Collision.hpp"
+#include "BoxColliderComponent.hpp"
+#include "ShapeRendererComponent.hpp"
+#include "PlayerMovementComponent.hpp"
 
 /*
 cmake --build --preset default
@@ -43,6 +46,16 @@ void kill()
     SDL_Quit();
 }
 
+void spawnPlayer(std::vector<std::unique_ptr<GameObject>> &allGameObjects, float startX, float startY)
+{
+    auto player = std::make_unique<GameObject>();
+    player->addComponent<TransformComponent>(startX, startY, 50.0f, 50.0f);
+    player->addComponent<PlayerMovementComponent>(150.0);
+    player->addComponent<BoxColliderComponent>(255.0f, 0.0f, 255.0f);
+    player->addComponent<ShapeRendererComponent>(0, 255, 0);
+    allGameObjects.push_back(std::move(player));
+}
+
 int main(int, char **)
 {
     if (!init())
@@ -50,8 +63,7 @@ int main(int, char **)
 
     std::vector<std::unique_ptr<GameObject>> allGameObjects;
 
-    allGameObjects.push_back(std::make_unique<Player>(200.0f, 200.0f, 50.0f, 50.0f, 100.0f));
-    allGameObjects.push_back(std::make_unique<Wall>(100.0f, 100.0f, 50.0f, 50.0f));
+    spawnPlayer(allGameObjects, 100.0f, 100.0f);
 
     SDL_Event event;
     bool isMainLooping = true;
@@ -77,36 +89,46 @@ int main(int, char **)
                 float mouseX, mouseY = 0.0f;
                 SDL_GetMouseState(&mouseX, &mouseY);
                 std::println("Mouse @ {}, {}", mouseX, mouseY);
-                allGameObjects.push_back(std::make_unique<Player>(mouseX, mouseY, 50.0f, 50.0f, 100.0f));
+                // allGameObjects.push_back(std::make_unique<Player>(mouseX, mouseY, 50.0f, 50.0f, 100.0f));
             }
         }
 
-        // delta time
+        // 1) delta time
         Uint64 currentTime = SDL_GetTicks();
         float deltaTime = (currentTime - lastTime) / 1000.0f;
         lastTime = currentTime;
 
-        // key state
+        // 2) key state
         const bool *keystate = SDL_GetKeyboardState(NULL);
 
         // update objects
         for (auto &gameObject : allGameObjects)
         {
+            if (!gameObject->GetIsAlive())
+                continue;
             gameObject->update(deltaTime, keystate);
         }
 
         // collision
-        for (size_t i = 0; i < allGameObjects.size(); ++i)
-        {
-            for (size_t j = i + 1; j < allGameObjects.size(); ++j)
-            {
-                if (!allGameObjects[i]->GetIsAlive() || !allGameObjects[j]->GetIsAlive())
-                    continue;
-                if (checkAABB(allGameObjects[i]->getRect(), allGameObjects[j]->getRect()))
-                {
-                }
-            }
-        }
+        // for (size_t i = 0; i < allGameObjects.size(); ++i)
+        // {
+        //     auto *colliderA = allGameObjects[i]->getComponent<BoxColliderComponent>();
+        //     if (!colliderA || !allGameObjects[i]->GetIsAlive())
+        //         continue;
+
+        //     for (size_t j = i + 1; j < allGameObjects.size(); ++j)
+        //     {
+        //         auto *colliderB = allGameObjects[j]->getComponent<BoxColliderComponent>();
+        //         if (!colliderB || !allGameObjects[j]->GetIsAlive())
+        //             continue;
+
+        //         // Use your inline checkAABB function with the component's rects
+        //         if (checkAABB(colliderA->getRect(), colliderB->getRect()))
+        //         {
+        //             // Collision occurred between object i and object j!
+        //         }
+        //     }
+        // }
 
         // render background
         SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
@@ -115,14 +137,23 @@ int main(int, char **)
         // render objects
         for (auto &gameObject : allGameObjects)
         {
+            if (!gameObject->GetIsAlive())
+                continue;
             gameObject->render(renderer);
         }
-
-        SDL_RenderPresent(renderer);
 
         // delete dead
         std::erase_if(allGameObjects, [](const auto &obj)
                       { return !obj->GetIsAlive(); });
+
+        for (auto &gameObject : allGameObjects)
+        {
+            if (!gameObject->GetIsAlive())
+                continue;
+            gameObject->render(renderer);
+        }
+
+        SDL_RenderPresent(renderer);
 
         SDL_Delay(16);
     }
