@@ -30,11 +30,21 @@ bool init()
         return false;
     }
 
-    // create the window
+    // font initing
+    if (!TTF_Init())
+    {
+        std::println("SDL Init Error: {}", SDL_GetError());
+        SDL_Quit();
+        return false;
+    }
+
+    // window init
     bool isCreated = SDL_CreateWindowAndRenderer("JoeGameEngine", 1280, 720, 0, &window, &renderer);
     if (!isCreated)
     {
         std::println("SDL Init Error: {}", SDL_GetError());
+        TTF_Quit();
+        SDL_Quit();
         return false;
     }
     return true;
@@ -42,17 +52,26 @@ bool init()
 
 void kill()
 {
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
+    if (renderer)
+    {
+        SDL_DestroyRenderer(renderer);
+        renderer = nullptr;
+    }
+    if (window)
+    {
+        SDL_DestroyWindow(window);
+        window = nullptr;
+    }
+    TTF_Quit(); // shuts down extension libraries/core sdl
     SDL_Quit();
 }
 
 void spawnPlayer(std::vector<std::unique_ptr<GameObject>> &allGameObjects, float startX, float startY)
 {
     auto player = std::make_unique<GameObject>();
-    player->addComponent<TransformComponent>(startX, startY, 50.0f, 50.0f);
+    player->addComponent<TransformComponent>(startX, startY, 50.0f, 100.0f);
     player->addComponent<PlayerMovementComponent>(150.0);
-    player->addComponent<BoxColliderComponent>(255.0f, 0.0f, 255.0f);
+    player->addComponent<BoxColliderComponent>(50.0f, 50.0f);
     player->addComponent<ShapeRendererComponent>(0, 255, 0);
     allGameObjects.push_back(std::move(player));
 }
@@ -87,7 +106,8 @@ int main(int, char **)
                 break;
             }
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
-                float mouseX, mouseY = 0.0f;
+                float mouseX = 0.0f;
+                float mouseY = 0.0f;
                 SDL_GetMouseState(&mouseX, &mouseY);
                 std::println("Mouse @ {}, {}", mouseX, mouseY);
                 // allGameObjects.push_back(std::make_unique<Player>(mouseX, mouseY, 50.0f, 50.0f, 100.0f));
@@ -148,7 +168,6 @@ int main(int, char **)
         }
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(16); // 1/60 = ~.1667
     }
 
     kill();
