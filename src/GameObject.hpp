@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include "vector2.hpp"
 
 class GameObject
 {

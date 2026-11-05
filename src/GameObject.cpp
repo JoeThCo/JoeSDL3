@@ -17,14 +17,20 @@ void Player::update(float deltaTime, const bool *keystate = nullptr)
     // Add movement/update logic here
     if (keystate)
     {
+        Vector2 inputDir(0.0f, 0.0f);
         if (keystate[SDL_SCANCODE_W])
-            rect.y -= speed * deltaTime;
+            inputDir.y -= 1.0f;
         if (keystate[SDL_SCANCODE_S])
-            rect.y += speed * deltaTime;
+            inputDir.y += 1.0f;
         if (keystate[SDL_SCANCODE_A])
-            rect.x -= speed * deltaTime;
+            inputDir.x -= 1.0f;
         if (keystate[SDL_SCANCODE_D])
-            rect.x += speed * deltaTime;
+            inputDir.x += 1.0f;
+
+        inputDir.normalize();
+
+        rect.x += inputDir.x * speed * deltaTime;
+        rect.y += inputDir.y * speed * deltaTime;
     }
 }
 
