@@ -25,6 +25,8 @@ set(
 
 add_executable(JoeGameEngine
   src/main.cpp
+  src/GameObject.cpp
+  src/GameObject.hpp
 )
 
 if(APPLE)

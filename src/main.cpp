@@ -3,6 +3,7 @@
 #include <SDL3_image/SDL_image.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <iostream>
+#include "GameObject.hpp"
 
 /*
 cmake --build --preset default
@@ -11,6 +12,7 @@ build/JoeGameEngine
 
 SDL_Window *window;
 SDL_Renderer *renderer;
+Uint64 lastTime = SDL_GetTicks();
 
 void printError()
 {
@@ -38,6 +40,7 @@ bool init()
 
 void kill()
 {
+    SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
@@ -47,20 +50,9 @@ int main(int, char **)
     if (!init())
         return 1;
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
-    SDL_RenderClear(renderer); // fill back buffer with draw call
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderLine(renderer, 0, 0, 100, 100);
-
-    SDL_FRect r;
-    r.x = 200;
-    r.y = 200;
-    r.h = 50;
-    r.w = 50;
-    SDL_RenderRect(renderer, &r);
-
     SDL_RenderPresent(renderer); // display that hoe
+
+    auto player = std::make_unique<Player>(100.0f, 100.0f, 50.0f, 50.0f, 100.0f);
 
     SDL_Event event;
     bool isMainLooping = true;
@@ -85,6 +77,23 @@ int main(int, char **)
             }
         }
 
+        Uint64 currentTime = SDL_GetTicks();
+        float deltaTime = (currentTime - lastTime) / 1000.0f;
+        lastTime = currentTime;
+
+        const bool *keystate = SDL_GetKeyboardState(NULL);
+
+        // update objects
+        player->update(deltaTime, keystate);
+
+        // render background
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+        SDL_RenderClear(renderer); // fill back buffer with draw call
+
+        // render objects
+        player->render(renderer);
+
+        SDL_RenderPresent(renderer);
         SDL_Delay(16);
     }
 
