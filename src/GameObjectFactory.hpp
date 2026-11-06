@@ -32,6 +32,12 @@ namespace GameObjectFactory
 
         float size = 15.0f;
         bullet->addComponent<TransformComponent>(pos, Vector2(size));
+
+        if (auto *transform = bullet->getComponent<TransformComponent>())
+        {
+            transform->center();
+        }
+
         bullet->addComponent<BoxColliderComponent>(size, size);
         bullet->addComponent<ShapeRendererComponent>(ShapeType::Circle, SDL_Color(255, 0, 0, 255));
         bullet->addComponent<LinearRigidBody>(bullet.get());

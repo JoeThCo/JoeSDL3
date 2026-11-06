@@ -96,17 +96,17 @@ int main(int, char **)
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
-                // std::println("Mouse @ {}, {}", event.button.x, event.button.y);
                 Vector2 mousePosition = Vector2(event.button.x, event.button.y);
-                Vector2 playerPosition = Vector2(0, 0);
+                Vector2 spawnPosition = Vector2(0, 0);
+
                 if (auto *playerTransform = player->getComponent<TransformComponent>())
                 {
-                    playerPosition = playerTransform->getPosition();
+                    spawnPosition = playerTransform->getPosition() + (playerTransform->getSize() * 0.5f);
                 }
 
-                Vector2 direction = mousePosition - playerPosition;
+                Vector2 direction = mousePosition - spawnPosition;
 
-                GameObject *bullet = GameObjectFactory::spawnBullet(allGameObjects, window, playerPosition);
+                GameObject *bullet = GameObjectFactory::spawnBullet(allGameObjects, window, spawnPosition);
                 if (auto *rigidbody = bullet->getComponent<LinearRigidBody>())
                 {
                     rigidbody->setVelocity(direction.normalized(), 300);

@@ -27,6 +27,11 @@ public:
         return Vector2(centerX, centerY);
     }
 
+    Vector2 getSize()
+    {
+        return Vector2(w, h);
+    }
+
     void center()
     {
         move(getCenter());
