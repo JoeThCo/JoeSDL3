@@ -1,6 +1,6 @@
 #pragma once
 #include "Component.hpp"
-#include "Vector2.hpp"
+#include "../Vector2.hpp"
 #include "TransformComponent.hpp"
 
 class LinearRigidBody : public Component
@@ -11,7 +11,7 @@ private:
 public:
     Vector2 velocity;
 
-    LinearRigidBody(GameObject *owner, Vector2 initalVelocity) : velocity(initalVelocity)
+    LinearRigidBody(GameObject *owner)
     {
         Owner = owner;
         if (Owner)
@@ -32,6 +32,11 @@ public:
     void setVelocity(Vector2 v)
     {
         velocity = v;
+    }
+
+    void setVelocity(Vector2 dir, float speed)
+    {
+        setVelocity(dir * speed);
     }
 
     void setVelocityFromDirection(Vector2 dir, float speed)

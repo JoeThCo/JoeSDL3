@@ -70,7 +70,7 @@ int main(int, char **)
         return 1;
 
     std::vector<std::unique_ptr<GameObject>> allGameObjects;
-    GameObjectFactory::spawnPlayer(allGameObjects, Vector2(100.0f, 100.0f));
+    GameObject *player = GameObjectFactory::spawnPlayer(allGameObjects, Vector2(100.0f, 100.0f));
 
     SDL_Event event;
     bool isMainLooping = true;
@@ -97,11 +97,19 @@ int main(int, char **)
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
             {
                 // std::println("Mouse @ {}, {}", event.button.x, event.button.y);
-                GameObject *bullet = GameObjectFactory::spawnBullet(allGameObjects, Vector2(event.button.x, event.button.y), 0);
-                TransformComponent *transformComponent = bullet->getComponent<TransformComponent>();
-                if (transformComponent)
+                Vector2 mousePosition = Vector2(event.button.x, event.button.y);
+                Vector2 playerPosition = Vector2(0, 0);
+                if (auto *playerTransform = player->getComponent<TransformComponent>())
                 {
-                    transformComponent->move(transformComponent->getCenter());
+                    playerPosition = playerTransform->getPosition();
+                }
+
+                Vector2 direction = mousePosition - playerPosition;
+
+                GameObject *bullet = GameObjectFactory::spawnBullet(allGameObjects, window, playerPosition);
+                if (auto *rigidbody = bullet->getComponent<LinearRigidBody>())
+                {
+                    rigidbody->setVelocity(direction.normalized(), 300);
                 }
                 break;
             }

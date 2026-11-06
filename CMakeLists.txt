@@ -35,6 +35,7 @@ add_executable(JoeGameEngine
   src/Components/PlayerMovementComponent.hpp
   src/GameObjectFactory.hpp
   src/Components/LinearRigidbody.hpp
+  src/Components/BoundsDestroyerComponent.hpp
 )
 
 if(APPLE)
