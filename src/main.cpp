@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <print>
 
 #include "GameObjectFactory.hpp"
 #include "GameObject.hpp"
@@ -20,7 +21,7 @@ build/JoeGameEngine
 
 SDL_Window *window;
 SDL_Renderer *renderer;
-Uint64 lastTime = SDL_GetTicks();
+Uint64 lastTime;
 
 std::vector<std::unique_ptr<GameObject>> allGameObjects;
 GameObject *player = NULL;
@@ -105,6 +106,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     lastTime = currentTime;
 
     // 2) key state
+    // use the event in the gameobject/component?
     const bool *keystate = SDL_GetKeyboardState(NULL);
 
     // update objects
@@ -136,13 +138,13 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     //     }
     // }
 
-    // render background
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderClear(renderer); // fill back buffer with draw call
-
     // delete dead
     std::erase_if(allGameObjects, [](const auto &obj)
                   { return !obj->GetIsAlive(); });
+
+    // render background
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer); // fill back buffer with draw call
 
     // render
     for (auto &gameObject : allGameObjects)
